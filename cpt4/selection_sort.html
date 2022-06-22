@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>选择排序</title>
+</head>
+<body>
+<div>
+    <p>交换最少的排序</p>
+    <canvas width="500" height="500" id="canvas"></canvas>
+</div>
+<script src="helper.js"></script>
+<script>
+    const canvas = document.getElementById('canvas')
+    const ctx = canvas.getContext('2d')
+    const config = {
+        width: canvas.width,
+        height: canvas.height,
+        defaultColor: default_color,
+        sleepTime: 0.1
+    }
+    // let arr = [5, 3, 6, 6, 8, 1, 10, 9, 2]
+    // formatArr(arr, 10, canvas.height)
+    let arr = randomArr(20, 50)
+    formatArr(arr, 50, canvas.height)
+    const drawer = new Drawer(config, ctx, arr)
+    async function selectionSort() {
+        for (let i = 0; i < arr.length; i ++) {
+            let minIdx = i
+            let minVal = arr[i]
+            for (let idx = i; idx < arr.length; idx ++) {
+                await drawer.resetPlan()
+                    .withColorRange(sorted_color, 0, i-1)
+                    .withColor(index_color, idx)
+                    .draw()
+                if (arr[idx] < minVal) {
+                    minIdx = idx
+                    minVal = arr[idx]
+                }
+            }
+            await drawer.resetPlan()
+                .withColorRange(sorted_color, 0, i-1)
+                .withColor(target_color, minIdx)
+                .draw()
+            swap(arr, i, minIdx)
+            await drawer.resetPlan()
+                .withColorRange(sorted_color, 0, i)
+                .draw()
+        }
+    }
+    selectionSort()
+</script>
+</body>
+</html>

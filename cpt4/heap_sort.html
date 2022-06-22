@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>堆排序</title>
+</head>
+<body>
+<div>
+    <p>1. 创建大根堆</p>
+    <p>2. 将堆首（最大值）与堆尾互换</p>
+    <p>3. 堆的尺寸缩小一，并重新进行建堆操作</p>
+    <p>4. 重复步骤2、3，直到堆的尺寸为1</p>
+    <canvas width="500" height="500" id="canvas"></canvas>
+</div>
+<script src="helper.js"></script>
+<script>
+    const canvas = document.getElementById('canvas')
+    const ctx = canvas.getContext('2d')
+    const config = {
+        width: canvas.width,
+        height: canvas.height,
+        defaultColor: default_color,
+        sleepTime: 0.1
+    }
+    // let arr = [5, 3, 6, 6, 8, 1, 10, 9, 2]
+    // formatArr(arr, 10, canvas.height)
+    let arr = randomArr(20, 50)
+    formatArr(arr, 50, canvas.height)
+    const drawer = new Drawer(config, ctx, arr)
+    let sortedLIdx = arr.length
+
+    async function buildMaxHeap(arr) {
+        for (let i = Math.floor(arr.length / 2); i >= 0; i--) {
+            await heapify(arr, i, arr.length-1)
+        }
+    }
+
+    async function heapify(arr, lidx, ridx) {
+        await drawer.resetPlan()
+            .withColorRange(sorting_color, lidx, ridx)
+            .withColorRange(sorted_color, sortedLIdx, arr.length-1)
+            .draw()
+        let li = 2 * lidx + 1
+        let ri = 2 * lidx + 2
+        let largestIdx = lidx
+        if (li <= ridx && arr[li] > arr[largestIdx]) {
+            largestIdx = li
+        }
+        if (ri <= ridx && arr[ri] > arr[largestIdx]) {
+            largestIdx = ri
+        }
+        if (largestIdx !== lidx) {
+            swap(arr, lidx, largestIdx)
+            await heapify(arr, largestIdx, ridx)
+        }
+    }
+
+    async function heapSort(arr) {
+        await buildMaxHeap(arr)
+        for (let i = arr.length-1; i > 0; i--) {
+            swap(arr, 0, i)
+            sortedLIdx = i
+            await heapify(arr, 0, i-1)
+            await drawer.resetPlan()
+                .withColorRange(sorted_color, i, arr.length-1)
+                .draw()
+        }
+        await drawer.resetPlan().withColorRange(sorted_color, 0, arr.length-1).draw()
+    }
+
+    heapSort(arr)
+
+</script>
+</body>
+</html>

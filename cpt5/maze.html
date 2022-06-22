@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>迷宫</title>
+</head>
+<body>
+<div>
+    <canvas width="505" height="505" id="canvas_dfs"></canvas>
+    <canvas width="505" height="505" id="canvas_bfs"></canvas>
+</div>
+
+<script src="maze_data.js"></script>
+<script src="maze.js"></script>
+<script src="maze_explorer.js"></script>
+<script>
+    (function (){
+        const canvas = document.getElementById('canvas_dfs')
+        const ctx = canvas.getContext('2d')
+        let maze = newMaze(maze_data)
+        maze.width = canvas.width
+        maze.height = canvas.height
+        maze.draw(ctx)
+        commonDfs(ctx, maze, new Dot(1, 0, t_dot_path), new Dot( 99, 100,t_dot_path))
+    })();
+    (function (){
+        const canvas = document.getElementById('canvas_bfs')
+        const ctx = canvas.getContext('2d')
+        let maze = newMaze(maze_data)
+        maze.width = canvas.width
+        maze.height = canvas.height
+        maze.draw(ctx)
+        commonBfs(ctx, maze, new Dot(1, 0, t_dot_path), new Dot( 99, 100,t_dot_path))
+    })();
+</script>
+</body>
+</html>

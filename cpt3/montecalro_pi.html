@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>3.3 - 3.4 蒙特卡洛算法求PI值</title>
+</head>
+<body>
+<div>
+    <div id="PI"></div>
+    <div>PI = 4 * 圆内点数 / 总点数</div>
+    <canvas width="500" height="500" id="canvas"></canvas>
+</div>
+<script>
+    const canvas = document.getElementById('canvas')
+    const pi_div = document.getElementById('PI')
+    const ctx = canvas.getContext('2d')
+    const width = canvas.width
+    const point_size = 500000 // 打点总数
+    const outer_point_color = '#5faf38dd'
+    const inner_point_color = '#d81248dd'
+    const cx = width/2
+    const cy = width/2
+    const cr = width/2
+
+    ctx.beginPath()
+    ctx.arc(cx, cy, cr, 0, Math.PI*2, true)
+    ctx.stroke()
+
+    let pointCount = 0
+    let innterPointCount = 0
+    function draw() {
+        for (let i = 0; i < 500; i ++) {
+            if (pointCount >= point_size) {
+                return
+            }
+            pointCount ++
+            ctx.beginPath()
+            let pointX = Math.random() * width;
+            let pointY = Math.random() * width;
+            if (inCircle(pointX, pointY, cx, cy, cr)) {
+                ctx.strokeStyle = inner_point_color
+                innterPointCount += 1
+            } else {
+                ctx.strokeStyle = outer_point_color
+            }
+            ctx.moveTo(pointX, pointY)
+            ctx.arc(pointX, pointY, 1, 0, Math.PI*2, true)
+            ctx.stroke()
+            pi_div.innerText = `${4*innterPointCount/pointCount}`
+        }
+        window.requestAnimationFrame(draw)
+    }
+    window.requestAnimationFrame(draw)
+
+    function inCircle(x, y, cx, cy, r) {
+        return Math.pow(x-cx, 2) + Math.pow(y-cy, 2) < Math.pow(r, 2)
+    }
+</script>
+</body>
+</html>

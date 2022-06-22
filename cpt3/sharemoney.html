@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>3.1 - 3.2 随机分钱</title>
+</head>
+<body>
+<div>
+    <div>
+        50个人，初始时每人拥有的钱相同，每人随机给其它人一块钱，最后每个人拥有的钱的分布是怎样的？
+    </div>
+    <canvas width="500" height="600" id="canvas"></canvas>
+</div>
+<script>
+    const canvas = document.getElementById('canvas')
+    const ctx = canvas.getContext('2d')
+    const moneys = []
+    const init_money = 10
+    const size = 50; // 总人数
+    const canvas_width = canvas.width
+    const canvas_height = canvas.height
+    const rect_width = canvas.width / size
+    for (let i = 0; i < size; i ++) {
+        moneys.push(init_money)
+    }
+    function draw() {
+        ctx.clearRect(0, 0, canvas_width, canvas_height)
+        for (let j = 0; j < 20; j ++) {
+            for (let i = 0; i < size; i ++) {
+                moneys[i] -= 1
+                moneys[Math.floor(Math.random()*size)] += 1
+            }
+        }
+        moneys.sort((v1, v2) => { return v1 - v2 })
+        moneys.forEach((money, idx) => {
+            ctx.strokeRect(idx*rect_width+1, canvas_height/2-money, rect_width-1, money)
+        })
+        window.requestAnimationFrame(draw)
+    }
+    window.requestAnimationFrame(draw)
+</script>
+</body>
+</html>

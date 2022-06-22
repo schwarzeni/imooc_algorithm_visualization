@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>归并排序</title>
+</head>
+<body>
+<div>
+    <canvas width="500" height="500" id="canvas"></canvas>
+</div>
+<script src="helper.js"></script>
+<script>
+    const canvas = document.getElementById('canvas')
+    const ctx = canvas.getContext('2d')
+    const config = {
+        width: canvas.width,
+        height: canvas.height,
+        defaultColor: default_color,
+        sleepTime: 0.2
+    }
+    // let arr = [10, 9, 9, 8, 7, 5, 3, 3, 1]
+    // formatArr(arr, 10, canvas.height)
+    let arr = randomArr(20, 50)
+    formatArr(arr, 50, canvas.height)
+    const drawer = new Drawer(config, ctx, arr)
+
+    async function mergeSort(li, ri) {
+        if (li >= ri) {
+            if (li === ri) {
+                await drawer.resetPlan().withColor(sorting_color, li).draw()
+            }
+            return
+        }
+        let mi = Math.floor((li + ri) / 2)
+        // TODO: 改成 [li,mi) 和 [mi, ri] 会出现死循环，[2 3] 区间，无语。。
+        await mergeSort(li, mi)
+        await mergeSort(mi + 1, ri)
+
+        let tmpArr = []
+        let lidx = li
+        let ridx = mi + 1
+        await drawer.resetPlan()
+            .withColorRange(sorting_color, li, ri)
+            .draw()
+        while (lidx <= mi && ridx <= ri) {
+
+            if (arr[lidx] < arr[ridx]) {
+                tmpArr.push(arr[lidx])
+                lidx += 1
+            } else {
+                tmpArr.push(arr[ridx])
+                ridx += 1
+            }
+        }
+        while (lidx <= mi) {
+            tmpArr.push(arr[lidx])
+            lidx += 1
+        }
+        while (ridx <= ri) {
+            tmpArr.push(arr[ridx])
+            ridx += 1
+        }
+        for (let i = 0; i < tmpArr.length; i++) {
+            arr[li + i] = tmpArr[i]
+        }
+        await drawer.resetPlan()
+            .withColorRange(sorted_color, li, ri)
+            .draw()
+    }
+
+    mergeSort(0, arr.length - 1)
+</script>
+</body>
+</html>
