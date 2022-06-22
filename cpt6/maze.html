@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>迷宫</title>
+</head>
+<body>
+<div>
+    <p>生成迷宫</p>
+    <p>1.深度优先 2.广度优先 3.随机队列 4.深度优先广度优先结合</p>
+    <p>将图的奇数点通过遍历连成一棵树</p>
+    <canvas width="300" height="300" id="canvas_dfs" style="margin-right: 10px"></canvas>
+    <canvas width="300" height="300" id="canvas_bfs"></canvas>
+    <canvas width="300" height="300" id="canvas_random"></canvas>
+    <canvas width="300" height="300" id="canvas_random_stack_queue"></canvas>
+</div>
+<script src="../cpt5/maze.js"></script>
+<script src="../cpt5/maze_explorer.js"></script>
+<script src="maze_gen.js"></script>
+<script>
+    let r = 31;
+    let c = 31;
+    let dotWidth = 9;
+    (async function () {
+        const canvas = document.getElementById('canvas_dfs')
+        const ctx = canvas.getContext('2d')
+        let maze = preGen(r, c, ctx)
+        maze.width = canvas.width
+        maze.height = canvas.height
+        maze.dotWidth = dotWidth
+        await maze.draw(ctx)
+        maze = await mazeGen(maze, ctx, new Stack())
+        await commonBfs(ctx, maze, new Dot(1, 0, t_dot_path, maze.dotWidth), new Dot( c-2, r-1,t_dot_path, maze.dotWidth))
+    })();
+    (async function () {
+        const canvas = document.getElementById('canvas_bfs')
+        const ctx = canvas.getContext('2d')
+        let maze = preGen(r, c, ctx)
+        maze.width = canvas.width
+        maze.height = canvas.height
+        maze.dotWidth = dotWidth
+        await maze.draw(ctx)
+        maze = await mazeGen(maze, ctx, new Queue())
+        await commonBfs(ctx, maze, new Dot(1, 0, t_dot_path, maze.dotWidth), new Dot( c-2, r-1,t_dot_path, maze.dotWidth))
+    })();
+    (async function () {
+        const canvas = document.getElementById('canvas_random')
+        const ctx = canvas.getContext('2d')
+        let maze = preGen(r, c, ctx)
+        maze.width = canvas.width
+        maze.height = canvas.height
+        maze.dotWidth = dotWidth
+        await maze.draw(ctx)
+        maze = await mazeGen(maze, ctx, new RandomQueue())
+        await commonBfs(ctx, maze, new Dot(1, 0, t_dot_path, maze.dotWidth), new Dot( c-2, r-1,t_dot_path, maze.dotWidth))
+    })();
+    (async function () {
+        const canvas = document.getElementById('canvas_random_stack_queue')
+        const ctx = canvas.getContext('2d')
+        let maze = preGen(r, c, ctx)
+        maze.width = canvas.width
+        maze.height = canvas.height
+        maze.dotWidth = dotWidth
+        await maze.draw(ctx)
+        maze = await mazeGen(maze, ctx, new RandomStackQueue())
+        await commonBfs(ctx, maze, new Dot(1, 0, t_dot_path, maze.dotWidth), new Dot( c-2, r-1,t_dot_path, maze.dotWidth))
+    })();
+
+</script>
+</body>
+</html>

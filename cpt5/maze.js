@@ -31,8 +31,28 @@ Maze.prototype.draw = function (ctx) {
   for (let r = 0; r < this.rc; r++) {
     for (let c = 0; c < this.cc; c++) {
       let dot = this.dots[r][c]
+      dot.width = this.dotWidth
       ctx.fillStyle = dot.type.color
+      if (dot.mist) {
+        ctx.fillStyle = '#000'
+      }
       ctx.fillRect(c * this.dotWidth, r * this.dotWidth, this.dotWidth, this.dotWidth)
+    }
+  }
+}
+
+Maze.prototype.openMist = async function(dot, ctx, delay) {
+  dot.mist = false
+  for (let rr = dot.r-1; rr <= dot.r+1; rr ++) {
+    for (let cc = dot.c-1; cc <= dot.c+1; cc ++) {
+      if (rr >= 0 && rr < this.dots.length && cc >= 0 && cc < this.dots[rr].length) {
+        if ( this.dots[rr][cc].mist) {
+          this.dots[rr][cc].mist = false
+        }
+        if (ctx) {
+          await this.dots[rr][cc].draw(ctx, delay)
+        }
+      }
     }
   }
 }
@@ -46,11 +66,15 @@ const t_dot_path = {color: '#fff'}
 const t_dot_exploring = {color: '#1439d0'}
 const t_dot_result = {color: '#3eb261'}
 
-function Dot(r, c, type) {
+function Dot(r, c, type, width) {
   this.r = r
   this.c = c
   this.type = type
   this.width = 5
+  if (width > 0) {
+    this.width = width
+  }
+  this.mist = false
 }
 
 Dot.prototype.canGo = function () {
@@ -70,6 +94,6 @@ Dot.prototype.draw = function (ctx, delay, type) {
     setTimeout(() => {
       ctx.fillRect(this.c*this.width, this.r*this.width, this.width, this.width)
       resolve()
-    }, 1000*delay)
+    }, delay * 1000)
   })
 }
